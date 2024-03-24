@@ -32,6 +32,8 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
+#define Arduino_I2C_ADDRESS 0x10
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -45,6 +47,9 @@ I2C_HandleTypeDef hi2c1;
 
 /* USER CODE BEGIN PV */
 
+uint8_t TxBuff = 0x01;
+uint32_t Tick = 0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -52,6 +57,9 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
+
+void SEND_BYTE(uint8_t Data);
+void DELAY(uint32_t Delay_ms);
 
 /* USER CODE END PFP */
 
@@ -76,7 +84,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-
+  SysTick_Config(16000000/1000);
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -98,7 +106,10 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+	  SEND_BYTE(TxBuff);
+	  for(int i = 0; i < 99999; i++){
+		  //EMPTY
+	  }
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -211,6 +222,10 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+void SEND_BYTE(uint8_t Data){
+	HAL_I2C_Master_Transmit(&hi2c1, Arduino_I2C_ADDRESS, &Data, 1, 1000);
+}
 
 /* USER CODE END 4 */
 
